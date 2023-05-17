@@ -21,12 +21,19 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
 
-    - name: serverless deploy
-      uses: serverless/github-action@master
+    - name: Install Terraform 
+      uses: hashicorp/setup-terraform@v2
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
       with:
-        args: deploy
-      env:
-        # SERVERLESS_ACCESS_KEY: ${{ secrets.SERVERLESS_ACCESS_KEY }}
-        # or if using AWS credentials directly
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-east-2
+    - name: intiailize terraform
+      run: terraform init
+    - name: validate terraform
+      run: terraform validate
+    - name: plan terraform
+      run: terraform plan
+    - name: apply terraform
+      run: terraform apply -auto-approve
